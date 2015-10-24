@@ -22,9 +22,12 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.generic import View
 from rest_framework.response import Response
 from rest_framework import generics
+import sys
 
 
 class ComunidadViewSet(viewsets.ModelViewSet):
+	print >> sys.stderr, "string or object goes here"
+
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
