@@ -32,7 +32,7 @@ class ComunidadViewSet(viewsets.ModelViewSet):
 	#permission_classes = (IsAuthenticated,)
 
 	def get_queryset(self):
-		print self.request.META
+		#print self.request.META
 		print >> sys.stderr, self.request.META
 		return Comunidad.objects.all()
 
