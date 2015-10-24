@@ -29,7 +29,7 @@ class ComunidadViewSet(viewsets.ModelViewSet):
 	print >> sys.stderr, "string or object goes here"
 
 	#authentication_classes = (TokenAuthentication,)
-	permission_classes = (IsAuthenticated,)
+	#permission_classes = (IsAuthenticated,)
 
 	def get_queryset(self):
 		print self.request.META
