@@ -28,7 +28,7 @@ import sys
 class ComunidadViewSet(viewsets.ModelViewSet):
 	print >> sys.stderr, "string or object goes here"
 
-	authentication_classes = (TokenAuthentication,)
+	#authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
 	def get_queryset(self):
