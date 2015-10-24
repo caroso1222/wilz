@@ -31,7 +31,11 @@ class ComunidadViewSet(viewsets.ModelViewSet):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	queryset = Comunidad.objects.all()
+	def get_queryset(self):
+		print self.request.META
+		print >> sys.stderr, self.request.META
+		return Comunidad.objects.all()
+
 	serializer_class = ComunidadSerializer
 
 class UsuarioView(generics.ListAPIView):

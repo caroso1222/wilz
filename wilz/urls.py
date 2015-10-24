@@ -23,7 +23,7 @@ class UserViewSet(viewsets.ModelViewSet):
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 router2 = DefaultRouter()
-router2.register(r'comunidades',views.ComunidadViewSet)
+router2.register(r'comunidades',views.ComunidadViewSet,base_name = "comunidad")
 
 
 urlpatterns = [
