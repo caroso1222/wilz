@@ -13,10 +13,8 @@ class CaravanaSerializer(serializers.ModelSerializer):
 		model = Caravana
 		fields = ('id','nombre','origen','destino','comunidad','ruta','fecha_salida','lider')
 			
-class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
+class UsuarioSerializer(serializers.ModelSerializer):
+	#usern = serializers.SlugRelatedField(read_only=True, slug_field='usern')
 	class Meta:
 		model = Usuario
 		fields = ('id','user','nombre','celular','comunidad')
-
-	def get_comunidad(self,obj):
-		return obj.comunidad.nombre

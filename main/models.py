@@ -18,7 +18,7 @@ class Comunidad(models.Model):
 		ordering = ('created',)
 
 class Usuario(models.Model):
-	user = models.OneToOneField(settings.AUTH_USER_MODEL)
+	user = models.OneToOneField(settings.AUTH_USER_MODEL,related_name="usern")
 	nombre = models.CharField(max_length = 100)
 	celular = models.CharField(max_length = 100)
 	comunidad = models.ForeignKey(Comunidad, related_name="usuarios")
