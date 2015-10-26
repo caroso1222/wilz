@@ -133,6 +133,7 @@ class RutaVan(models.Model):
 	nombre = models.CharField(max_length = 100)
 	costo = models.IntegerField()
 	created = models.DateTimeField(auto_now_add = True, auto_now = False)
+	comunidad = models.ForeignKey(Comunidad)
 	last_modified = models.DateTimeField(auto_now = True)
 
 	def __unicode__(self):
