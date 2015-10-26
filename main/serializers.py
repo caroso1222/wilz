@@ -12,6 +12,11 @@ class CaravanaSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Caravana
 		fields = ('id','nombre','origen','destino','comunidad','ruta','fecha_salida','lider')
+
+class CaravanaIDSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Caravana
+		fields = ('id',)
 			
 class UsuarioSerializer(serializers.ModelSerializer):
 	#usern = serializers.SlugRelatedField(read_only=True, slug_field='usern')

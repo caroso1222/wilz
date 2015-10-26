@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^api2/caravanas/', CaravanaView.as_view()),
     url(r'^api2/usuario/', UsuarioView.as_view()),
     url(r'^api2/agregar-usuario-caravana/', UsuarioACaravanaView.as_view()),
+    url(r'^api2/caravanas-usuario/', CaravanasDeUsuario.as_view()),
     url(r'^api2/comunidad-usuario/', ComunidadFromUser.as_view()),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^rest-auth/', include('rest_auth.urls')),

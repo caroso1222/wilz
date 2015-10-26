@@ -58,6 +58,16 @@ class CaravanaView(generics.ListAPIView):
 		comunidad = usuario.comunidad
 		return Caravana.objects.filter(comunidad=comunidad)
 
+class CaravanasDeUsuario(generics.ListAPIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	serializer_class = CaravanaIDSerializer
+
+	def get_queryset(self):
+		usuario = Usuario.objects.get(user = self.request.user)
+		return Caravana.objects.filter(suscripciones__usuario=usuario).distinct()
+
 class UsuarioACaravanaView(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
