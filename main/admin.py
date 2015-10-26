@@ -61,7 +61,7 @@ class PublicacionCarroAdmin(admin.ModelAdmin):
 		ordering = ['created']
 
 class RutaVanAdmin(admin.ModelAdmin):
-	list_display = ['origen','destino','ruta','nombre','costo','created','last_modified']
+	list_display = ['origen','destino','ruta','nombre','costo','comunidad','created','last_modified']
 
 	class Meta:
 		model = RutaVan
