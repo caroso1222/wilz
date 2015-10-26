@@ -75,7 +75,7 @@ class LiderCaravana(models.Model):
 class Suscripcion(models.Model):
 	usuario = models.ForeignKey(Usuario)
 	lugar_subida = models.CharField(max_length = 100)
-	comentarios = models.TextField()
+	comentarios = models.TextField(blank = True)
 	esta_pago = models.BooleanField()
 	created = models.DateTimeField(auto_now_add = True, auto_now = False)
 	last_modified = models.DateTimeField(auto_now = True)
