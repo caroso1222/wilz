@@ -32,6 +32,7 @@ urlpatterns = [
     # url(r'^blog/', include('blog.urls')),
     url(r'^api/', include(router2.urls)),
     url(r'^api2/caravanas/', CaravanaView.as_view()),
+    url(r'^api2/rutas/', RutasView.as_view()),
     url(r'^api2/usuario/', UsuarioView.as_view()),
     url(r'^api2/agregar-usuario-caravana/', UsuarioACaravanaView.as_view()),
     url(r'^api2/caravanas-usuario/', CaravanasDeUsuario.as_view()),

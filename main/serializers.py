@@ -23,3 +23,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Usuario
 		fields = ('id','user','nombre','celular','comunidad')
+
+class RutasSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = RutaVan
+		fields = ('id','nombre','origen','destino','comunidad','ruta','costo')
