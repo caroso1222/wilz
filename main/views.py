@@ -62,7 +62,7 @@ class CaravanasDeUsuario(generics.ListAPIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	serializer_class = CaravanaIDSerializer
+	serializer_class = CaravanaSerializer
 
 	def get_queryset(self):
 		usuario = Usuario.objects.get(user = self.request.user)
