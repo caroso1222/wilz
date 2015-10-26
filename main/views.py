@@ -63,10 +63,10 @@ class UsuarioACaravanaView(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def post(self,request):
-		caravana = Caravana.objects.get(id=request.POST["id_caravana"])
+		caravana = Caravana.objects.get(id=request.data["id_caravana"])
 		usuario = Usuario.objects.get(user = request.user)
-		direccion = request.POST["direccion"]
-		comentarios = request.POST["comentarios"]
+		direccion = request.data["direccion"]
+		comentarios = request.data["comentarios"]
 		suscripcion = Suscripcion(usuario=usuario,
 			lugar_subida = direccion,
 			comentarios = comentarios,
