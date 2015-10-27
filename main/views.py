@@ -25,11 +25,12 @@ from rest_framework import generics
 import sys
 
 
+
 class ComunidadViewSet(viewsets.ModelViewSet):
 	print >> sys.stderr, "string or object goes here"
 
-	authentication_classes = (TokenAuthentication,)
-	permission_classes = (IsAuthenticated,)
+	authentication_classes = ()
+	permission_classes = ()
 
 	#def get_queryset(self):
 		#print self.request.META
@@ -98,6 +99,27 @@ class UsuarioACaravanaView(APIView):
 		caravana.save()
 		content = {
 			'mensaje':'suscripcion exitosa',
+		}
+		return Response(content)
+
+class RegistrarUsuario(APIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self,request):
+		user_sistema = request.user
+		email = request.data["email"]
+		print(email.split("@")[1])
+		comunidad = Comunidad.objects.get(url_email = email.split("@")[1])
+		nuevoUsuario = Usuario(
+			user = user_sistema,
+			nombre = request.data["nombre"],
+			celular = request.data["celular"],
+			comunidad = comunidad
+			)
+		nuevoUsuario.save()
+		content = {
+			'mensaje':'suscripcion de usuario exitosa',
 		}
 		return Response(content)
 

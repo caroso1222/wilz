@@ -9,6 +9,7 @@ from django.conf import settings
 class Comunidad(models.Model):
 	nombre = models.CharField(max_length=100)
 	created = models.DateTimeField(auto_now_add = True, auto_now = False)
+	url_email = models.CharField(max_length=100)
 	last_modified = models.DateTimeField(auto_now = True)
 
 	def __unicode__(self):

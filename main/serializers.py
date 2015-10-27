@@ -6,7 +6,7 @@ class ComunidadSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Comunidad
-		fields = ('id','nombre','created','usuarios')
+		fields = ('id','nombre','url_email','created','usuarios')
 
 class CaravanaSerializer(serializers.ModelSerializer):
 	class Meta:
