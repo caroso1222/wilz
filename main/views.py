@@ -30,7 +30,7 @@ class ComunidadViewSet(viewsets.ModelViewSet):
 	print >> sys.stderr, "string or object goes here"
 
 	authentication_classes = ()
-	permission_classes = ()
+	permission_classes = (AllowAny,)
 
 	#def get_queryset(self):
 		#print self.request.META
@@ -109,7 +109,6 @@ class RegistrarUsuario(APIView):
 	def post(self,request):
 		user_sistema = request.user
 		email = request.data["email"]
-		print(email.split("@")[1])
 		comunidad = Comunidad.objects.get(url_email = email.split("@")[1])
 		nuevoUsuario = Usuario(
 			user = user_sistema,
