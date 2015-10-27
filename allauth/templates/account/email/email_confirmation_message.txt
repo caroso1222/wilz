@@ -1,0 +1,8 @@
+{% load account %}{% user_display user as user_display %}{% load i18n %}{% autoescape off %}{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Saludos desde {{ site_name }}!
+
+Estás recibiendo este email porque creaste una cuenta en Wilz con este correo electrónico.
+
+Para confirmar que esto es correcto y activar tu cuenta, has clic en el siguiente enlace:  {{ activate_url }}
+{% endblocktrans %}{% endautoescape %}
+{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Te damos la bienvenida desde {{ site_name }}!
+{{ site_domain }}{% endblocktrans %}
