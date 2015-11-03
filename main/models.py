@@ -95,13 +95,30 @@ class Caravana(models.Model):
 	ruta = models.CharField(max_length = 100)
 	fecha_salida = models.DateTimeField()
 	lider = models.OneToOneField(LiderCaravana)
-	suscripciones = models.ManyToManyField(Suscripcion)
+	suscripciones = models.ManyToManyField(Suscripcion, blank = True)
 	created = models.DateTimeField(auto_now_add = True, auto_now = False)
 	comunidad = models.ForeignKey(Comunidad)
 	last_modified = models.DateTimeField(auto_now = True)
 
 	def __unicode__(self):
 		return self.nombre
+
+	class Meta:
+		ordering = ('created',)
+
+class PublicacionCaravana(models.Model):
+	lider = models.ForeignKey(Usuario)
+	origen = models.CharField(max_length = 100)
+	destino = models.CharField(max_length = 100)
+	ruta = models.TextField()
+	fecha_publicacion = models.DateTimeField(auto_now_add = True, auto_now = False)
+	fecha_salida = models.DateTimeField()
+	suscripciones = models.ManyToManyField(Suscripcion, blank = True)
+	created = models.DateTimeField(auto_now_add = True, auto_now = False)
+	last_modified = models.DateTimeField(auto_now = True)
+
+	def __unicode__(self):
+		return "%s. %s - %s" %(self.lider.nombre,self.origen,self.destino)
 
 	class Meta:
 		ordering = ('created',)

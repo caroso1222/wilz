@@ -60,6 +60,13 @@ class PublicacionCarroAdmin(admin.ModelAdmin):
 		model = PublicacionCarro
 		ordering = ['created']
 
+class PublicacionCaravanaAdmin(admin.ModelAdmin):
+	list_display = ['lider','origen','destino','ruta','fecha_publicacion','fecha_salida','created','last_modified']
+
+	class Meta:
+		model = PublicacionCaravana
+		ordering = ['created']
+
 class RutaVanAdmin(admin.ModelAdmin):
 	list_display = ['origen','destino','ruta','nombre','costo','comunidad','created','last_modified']
 
@@ -84,4 +91,5 @@ admin.site.register(Caravana, CaravanaAdmin)
 admin.site.register(PublicacionCarro, PublicacionCarroAdmin)
 admin.site.register(RutaVan, RutaVanAdmin)
 admin.site.register(ServicioVan, ServicioVanAdmin)
+admin.site.register(PublicacionCaravana,PublicacionCaravanaAdmin)
 

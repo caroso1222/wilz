@@ -28,3 +28,8 @@ class RutasSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = RutaVan
 		fields = ('id','nombre','origen','destino','comunidad','ruta','costo')
+
+class PublicacionCaravanaSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = PublicacionCaravana
+		fields = ('lider','origen','destino','ruta','fecha_salida')

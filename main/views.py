@@ -70,6 +70,16 @@ class RutasView(generics.ListAPIView):
 		comunidad = usuario.comunidad
 		return RutaVan.objects.filter(comunidad=comunidad)
 
+class CaravanasLiderUsuario(generics.ListAPIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	serializer_class = PublicacionCaravanaSerializer
+
+	def get_queryset(self):
+		usuario = Usuario.objects.get(user = self.request.user)
+		return PublicacionCaravana.objects.filter(lider=usuario)
+
 class CaravanasDeUsuario(generics.ListAPIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
@@ -99,6 +109,28 @@ class UsuarioACaravanaView(APIView):
 		caravana.save()
 		content = {
 			'mensaje':'suscripcion exitosa',
+		}
+		return Response(content)
+
+class PublicarCaravana(APIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self,request):
+		usuario = Usuario.objects.get(user = request.user)
+		origen = request.data["origen"]
+		destino = request.data["destino"]
+		ruta = request.data["ruta"]
+		fecha_salida = request.data["fecha_salida"]
+		publicacionCaravana = PublicacionCaravana(lider = usuario,
+			origen = origen,
+			destino = destino,
+			ruta = ruta,
+			fecha_salida = fecha_salida,
+			)
+		publicacionCaravana.save()
+		content = {
+		'mensaje': 'Publicacion exitosa'
 		}
 		return Response(content)
 
