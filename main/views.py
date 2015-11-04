@@ -78,6 +78,7 @@ class CaravanasLiderUsuario(generics.ListAPIView):
 
 	def get_queryset(self):
 		usuario = Usuario.objects.get(user = self.request.user)
+		print usuario
 		return PublicacionCaravana.objects.filter(lider=usuario)
 
 class CaravanasDeUsuario(generics.ListAPIView):
@@ -139,6 +140,7 @@ class RegistrarUsuario(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def post(self,request):
+		print request.data
 		user_sistema = request.user
 		email = request.data["email"]
 		comunidad = Comunidad.objects.get(url_email = email.split("@")[1])
