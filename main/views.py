@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -22,9 +23,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.generic import View
 from rest_framework.response import Response
 from rest_framework import generics
+from django.core.mail import send_mail
 import sys
-
-
 
 class ComunidadViewSet(viewsets.ModelViewSet):
 	print >> sys.stderr, "string or object goes here"
@@ -59,6 +59,17 @@ class CaravanaView(generics.ListAPIView):
 		comunidad = usuario.comunidad
 		return Caravana.objects.filter(comunidad=comunidad)
 
+class PublicacionCaravanaView(generics.ListAPIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	serializer_class = PublicacionCaravanaSerializer
+	#queryset = Caravana.objects.all()
+	def get_queryset(self):
+		usuario = Usuario.objects.get(user = self.request.user)
+		comunidad = usuario.comunidad
+		return PublicacionCaravana.objects.filter(lider__comunidad=comunidad).exclude(lider=usuario).order_by('fecha_salida')
+
 class RutasView(generics.ListAPIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
@@ -91,6 +102,16 @@ class CaravanasDeUsuario(generics.ListAPIView):
 		usuario = Usuario.objects.get(user = self.request.user)
 		return Caravana.objects.filter(suscripciones__usuario=usuario).distinct()
 
+class PublicacionesCaravanasDeUsuario(generics.ListAPIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	serializer_class = PublicacionCaravanaSerializer
+
+	def get_queryset(self):
+		usuario = Usuario.objects.get(user = self.request.user)
+		return PublicacionCaravana.objects.filter(suscripciones__usuario=usuario).distinct()
+
 class UsuarioACaravanaView(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
@@ -111,6 +132,62 @@ class UsuarioACaravanaView(APIView):
 		content = {
 			'mensaje':'suscripcion exitosa',
 		}
+		return Response(content)
+
+
+class UsuarioAPublicacionCaravanaView(APIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	#Suscribe un usuario a una caravana de otro usuario
+	def post(self,request):
+		publicacionCaravana = PublicacionCaravana.objects.get(id=request.data["id_caravana"])
+		usuario = Usuario.objects.get(user = request.user)
+		direccion = request.data["direccion"]
+		comentarios = request.data["comentarios"]
+		suscripcion = Suscripcion(usuario=usuario,
+			lugar_subida = direccion,
+			comentarios = comentarios,
+			esta_pago = True,
+			)
+		suscripcion.save()
+		publicacionCaravana.suscripciones.add(suscripcion)
+		publicacionCaravana.save()
+		content = {
+			'mensaje':'suscripcion exitosa',
+		}
+		#Envia los correos de notificacion
+		nombre_lider = publicacionCaravana.lider.nombre
+		email_lider = publicacionCaravana.lider.user.email
+		celular_lider = publicacionCaravana.lider.celular
+		nombre_usuario = usuario.nombre
+		email_usuario = usuario.user.email
+		celular_usuario = usuario.celular
+		origen_destino = "%s - %s"%(publicacionCaravana.origen,publicacionCaravana.destino)
+		send_mail('Suscripcion exitosa', 'Te has suscrito exitosamente a la caravana de %s. Puedes contactarlo en la direccion de mail %s o al numero de celular %s.'%(nombre_lider,email_lider,celular_lider), 'wilznotifications@wilz.co',   [usuario.user.email], fail_silently=False)
+		send_mail('Nueva suscripcion en tu caravana', '%s se ha suscrito en tu caravana %s. Puedes contactar a %s en la direccion de mail %s o al numero de celular %s.'%(nombre_usuario,origen_destino,nombre_usuario, email_usuario, celular_usuario), 'wilznotifications@wilz.co',   [publicacionCaravana.lider.user.email], fail_silently=False)
+		return Response(content)
+
+class AnularSuscripcionAPublicacionCaravanaView(APIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	#Elimina la suscripcion de usuario a una caravana
+	def post(self,request):
+		usuario = Usuario.objects.get(user = request.user)
+		publicacionCaravana = PublicacionCaravana.objects.get(id=request.data["id_caravana"])
+		suscripcion = publicacionCaravana.suscripciones.get(usuario=usuario)
+		publicacionCaravana.suscripciones.remove(suscripcion)
+		publicacionCaravana.save()
+		suscripcion.delete()
+		content = {
+		'mensaje': 'Eliminado exitosamente'
+		}
+		nombre_lider = publicacionCaravana.lider.nombre
+		nombre_usuario = usuario.nombre
+		origen_destino = "%s - %s"%(publicacionCaravana.origen,publicacionCaravana.destino)
+		send_mail('Suscripcion anulada exitosamente', 'Has anulado exitosamente tu suscripcion a la caravana de %s.'%(nombre_lider), 'wilznotifications@wilz.co',   [usuario.user.email], fail_silently=False)
+		send_mail('Suscripcion anulada en tu caravana', '%s ha anulado su suscripcion a tu caravana %s.'%(nombre_usuario,origen_destino), 'wilznotifications@wilz.co',   [publicacionCaravana.lider.user.email], fail_silently=False)
 		return Response(content)
 
 class PublicarCaravana(APIView):

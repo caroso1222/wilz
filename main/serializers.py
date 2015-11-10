@@ -30,6 +30,7 @@ class RutasSerializer(serializers.ModelSerializer):
 		fields = ('id','nombre','origen','destino','comunidad','ruta','costo')
 
 class PublicacionCaravanaSerializer(serializers.ModelSerializer):
+	el_lider = serializers.CharField(source='lider.nombre', read_only=True)
 	class Meta:
 		model = PublicacionCaravana
-		fields = ('lider','origen','destino','ruta','fecha_salida')
+		fields = ('id','el_lider','origen','destino','ruta','fecha_salida')
