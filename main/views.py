@@ -190,6 +190,27 @@ class AnularSuscripcionAPublicacionCaravanaView(APIView):
 		send_mail('Suscripcion anulada en tu caravana', '%s ha anulado su suscripcion a tu caravana %s.'%(nombre_usuario,origen_destino), 'wilznotifications@wilz.co',   [publicacionCaravana.lider.user.email], fail_silently=False)
 		return Response(content)
 
+@csrf_exempt
+def postLocation2(request):
+	print request.POST
+	return HttpResponse("<p>holaaass</p>")
+
+class PostLocation(APIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self,request):
+		usuario = Usuario.objects.get(user = request.user)
+		ubicacion = Ubicacion(longitud=request.data["location"]["longitude"],
+			latitud=request.data["location"]["latitude"])
+		ubicacion.save()
+		usuario.ubicacion = ubicacion
+		usuario.save()
+		content = {
+		'mensaje': 'Publicacion exitosa'
+		}
+		return Response(content)
+
 class PublicarCaravana(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)

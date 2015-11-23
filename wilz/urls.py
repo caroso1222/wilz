@@ -40,6 +40,8 @@ urlpatterns = [
     url(r'^api2/agregar-usuario-caravana/', UsuarioACaravanaView.as_view()),
     url(r'^api2/agregar-usuario-publicacion-caravana/', UsuarioAPublicacionCaravanaView.as_view()),
     url(r'^api2/caravanas-usuario/', CaravanasDeUsuario.as_view()),
+    url(r'^api2/post-location/', PostLocation.as_view()),
+    url(r'^api2/post-location-2/', views.postLocation2),
     url(r'^api2/publicaciones-caravanas-de-usuario/', PublicacionesCaravanasDeUsuario.as_view()),
     url(r'^api2/anular-suscripcion-a-publicacion-caravana/', AnularSuscripcionAPublicacionCaravanaView.as_view()),
     url(r'^api2/comunidad-usuario/', ComunidadFromUser.as_view()),

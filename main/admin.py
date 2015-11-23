@@ -11,8 +11,15 @@ class ComunidadAdmin(admin.ModelAdmin):
 		model = Comunidad
 		ordering = ['created']
 
+class UbicacionAdmin(admin.ModelAdmin):
+	list_display = ['longitud','latitud','created']
+
+	class Meta:
+		model = Ubicacion
+		ordering = ['created']
+
 class UsuarioAdmin(admin.ModelAdmin):
-	list_display = ['user','nombre','celular','comunidad','created','last_modified']
+	list_display = ['user','nombre','celular','comunidad','ubicacion','created','last_modified']
 
 	class Meta:
 		model = Usuario
@@ -82,6 +89,7 @@ class ServicioVanAdmin(admin.ModelAdmin):
 		ordering = ['created']
 
 admin.site.register(Comunidad, ComunidadAdmin)
+admin.site.register(Ubicacion, UbicacionAdmin)
 admin.site.register(Usuario, UsuarioAdmin)
 admin.site.register(Van, VanAdmin)
 admin.site.register(ConductorVan, ConductorVanAdmin)

@@ -18,6 +18,18 @@ class Comunidad(models.Model):
 	class Meta:
 		ordering = ('created',)
 
+class Ubicacion(models.Model):
+	longitud = models.CharField(max_length = 100)
+	latitud = models.CharField(max_length = 100)
+	created = models.DateTimeField(auto_now_add = True, auto_now = False)
+
+	def __unicode__(self):
+		return ("%s,%s")%(self.longitud,self.latitud)
+
+	class Meta:
+		ordering = ('created',)
+
+
 class Usuario(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL,related_name="usern")
 	nombre = models.CharField(max_length = 100)
@@ -25,6 +37,7 @@ class Usuario(models.Model):
 	comunidad = models.ForeignKey(Comunidad, related_name="usuarios")
 	created = models.DateTimeField(auto_now_add = True, auto_now = False)
 	last_modified = models.DateTimeField(auto_now = True)
+	ubicacion = models.ForeignKey(Ubicacion,related_name="ubicacion",blank=True, null=True)
 
 	def __unicode__(self):
 		return self.nombre
