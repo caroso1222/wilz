@@ -195,6 +195,32 @@ def postLocation2(request):
 	print request.POST
 	return HttpResponse("<p>holaaass</p>")
 
+class EmpezarPublicacionCaravana(APIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self,request):
+		publicacionCaravana = PublicacionCaravana.objects.get(id=request.data["id_caravana"])
+		publicacionCaravana.empezo = True
+		publicacionCaravana.save()
+		content = {
+		'mensaje': 'Publicacion exitosa'
+		}
+		return Response(content)
+
+class TerminarPublicacionCaravana(APIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self,request):
+		publicacionCaravana = PublicacionCaravana.objects.get(id=request.data["id_caravana"])
+		publicacionCaravana.empezo = False
+		publicacionCaravana.save()
+		content = {
+		'mensaje': 'Publicacion exitosa'
+		}
+		return Response(content)
+
 class PostLocation(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)

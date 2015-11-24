@@ -68,7 +68,7 @@ class PublicacionCarroAdmin(admin.ModelAdmin):
 		ordering = ['created']
 
 class PublicacionCaravanaAdmin(admin.ModelAdmin):
-	list_display = ['lider','origen','destino','ruta','fecha_publicacion','fecha_salida','created','last_modified']
+	list_display = ['lider','origen','destino','ruta','fecha_publicacion','fecha_salida','empezo','created','last_modified']
 
 	class Meta:
 		model = PublicacionCaravana

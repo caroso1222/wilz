@@ -127,6 +127,7 @@ class PublicacionCaravana(models.Model):
 	fecha_publicacion = models.DateTimeField(auto_now_add = True, auto_now = False)
 	fecha_salida = models.DateTimeField()
 	suscripciones = models.ManyToManyField(Suscripcion, blank = True)
+	empezo = models.BooleanField(default=False)
 	created = models.DateTimeField(auto_now_add = True, auto_now = False)
 	last_modified = models.DateTimeField(auto_now = True)
 
