@@ -211,6 +211,35 @@ class PostLocation(APIView):
 		}
 		return Response(content)
 
+class GetLocation(APIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def get(self,request):
+		publicacionCaravana = PublicacionCaravana.objects.get(id=request.data["id_caravana"])
+		lider = publicacionCaravana.lider
+		longitud = lider.ubicacion.longitud
+		latitud = lider.ubicacion.latitud
+		content = {
+			'longitud':longitud,
+			'latitud':latitud
+		}
+		return Response(content)
+
+class GetLocation2(APIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def get(self,request):
+		lider = Usuario.objects.get(user = request.user)
+		longitud = lider.ubicacion.longitud
+		latitud = lider.ubicacion.latitud
+		content = {
+			'longitud':longitud,
+			'latitud':latitud
+		}
+		return Response(content)
+
 class PublicarCaravana(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
