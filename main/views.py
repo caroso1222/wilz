@@ -201,6 +201,7 @@ class EmpezarPublicacionCaravana(APIView):
 
 	def post(self,request):
 		publicacionCaravana = PublicacionCaravana.objects.get(id=request.data["id_caravana"])
+		print publicacionCaravana.id
 		publicacionCaravana.empezo = True
 		publicacionCaravana.save()
 		content = {
@@ -241,7 +242,7 @@ class GetLocation(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	def get(self,request):
+	def post(self,request):
 		publicacionCaravana = PublicacionCaravana.objects.get(id=request.data["id_caravana"])
 		lider = publicacionCaravana.lider
 		longitud = lider.ubicacion.longitud
