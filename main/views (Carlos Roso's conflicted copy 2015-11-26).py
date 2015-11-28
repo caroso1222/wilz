@@ -201,6 +201,7 @@ class EmpezarPublicacionCaravana(APIView):
 
 	def post(self,request):
 		publicacionCaravana = PublicacionCaravana.objects.get(id=request.data["id_caravana"])
+		print publicacionCaravana.id
 		publicacionCaravana.empezo = True
 		publicacionCaravana.save()
 		content = {
