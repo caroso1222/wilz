@@ -1,5 +1,6 @@
 from django.contrib.auth import login, logout
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -44,15 +45,9 @@ class LoginView(GenericAPIView):
             self.response_serializer(self.token).data, status=status.HTTP_200_OK
         )
 
-    def get_error_response(self):
-        return Response(
-            self.serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
-
     def post(self, request, *args, **kwargs):
         self.serializer = self.get_serializer(data=self.request.data)
-        if not self.serializer.is_valid():
-            return self.get_error_response()
+        self.serializer.is_valid(raise_exception=True)
         self.login()
         return self.get_response()
 
@@ -70,7 +65,7 @@ class LogoutView(APIView):
     def post(self, request):
         try:
             request.user.auth_token.delete()
-        except:
+        except (AttributeError, ObjectDoesNotExist):
             pass
 
         logout(request)
@@ -112,10 +107,8 @@ class PasswordResetView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         # Create a serializer with request.data
         serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if not serializer.is_valid():
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         # Return the success message with OK HTTP status
         return Response(
@@ -139,10 +132,7 @@ class PasswordResetConfirmView(GenericAPIView):
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"success": "Password has been reset with the new password."})
 
@@ -161,9 +151,6 @@ class PasswordChangeView(GenericAPIView):
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"success": "New password has been saved."})

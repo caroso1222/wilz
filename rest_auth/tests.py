@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test.utils import override_settings
 from django.contrib.sites.models import Site
+from django.utils.encoding import force_text
 
 from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.facebook.provider import GRAPH_API_URL
@@ -49,9 +50,9 @@ class BaseAPITestCase(object):
 
         self.response = request_func(*args, **kwargs)
         is_json = bool(
-            filter(lambda x: 'json' in x, self.response._headers['content-type']))
+            [x for x in self.response._headers['content-type'] if 'json' in x])
         if is_json and self.response.content:
-            self.response.json = json.loads(self.response.content)
+            self.response.json = json.loads(force_text(self.response.content))
         else:
             self.response.json = {}
         if status_code:
@@ -159,13 +160,9 @@ class APITestCase1(TestCase, BaseAPITestCase):
         result = {}
         from django.utils.encoding import force_bytes
         from django.contrib.auth.tokens import default_token_generator
-        from django import VERSION
-        if VERSION[1] == 5:
-            from django.utils.http import int_to_base36
-            result['uid'] = int_to_base36(user.pk)
-        else:
-            from django.utils.http import urlsafe_base64_encode
-            result['uid'] = urlsafe_base64_encode(force_bytes(user.pk))
+        from django.utils.http import urlsafe_base64_encode
+
+        result['uid'] = urlsafe_base64_encode(force_bytes(user.pk))
         result['token'] = default_token_generator.make_token(user)
         return result
 
@@ -298,7 +295,7 @@ class APITestCase1(TestCase, BaseAPITestCase):
         data = {
             'new_password1': self.NEW_PASS,
             'new_password2': self.NEW_PASS,
-            'uid': url_kwargs['uid'],
+            'uid': force_text(url_kwargs['uid']),
             'token': '-wrong-token-'
         }
         self.post(url, data=data, status_code=400)
@@ -325,7 +322,7 @@ class APITestCase1(TestCase, BaseAPITestCase):
         data = {
             'new_password1': self.NEW_PASS,
             'new_password2': self.NEW_PASS,
-            'uid': url_kwargs['uid'],
+            'uid': force_text(url_kwargs['uid']),
             'token': url_kwargs['token']
         }
         url = reverse('rest_password_reset_confirm')
@@ -336,6 +333,15 @@ class APITestCase1(TestCase, BaseAPITestCase):
             "password": self.NEW_PASS
         }
         self.post(self.login_url, data=payload, status_code=200)
+
+    def test_password_reset_with_invalid_email(self):
+        get_user_model().objects.create_user(self.USERNAME, self.EMAIL, self.PASS)
+
+        # call password reset
+        mail_count = len(mail.outbox)
+        payload = {'email': 'nonexisting@email.com'}
+        self.post(self.password_reset_url, data=payload, status_code=400)
+        self.assertEqual(len(mail.outbox), mail_count)
 
     def test_user_details(self):
         user = get_user_model().objects.create_user(self.USERNAME, self.EMAIL, self.PASS)

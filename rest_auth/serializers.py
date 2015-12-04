@@ -1,18 +1,17 @@
 from django.contrib.auth import get_user_model, authenticate
 from django.conf import settings
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
-try:
-    from django.utils.http import urlsafe_base64_decode as uid_decoder
-except:
-    # make compatible with django 1.5
-    from django.utils.http import base36_to_int as uid_decoder
 from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode as uid_decoder
 from django.utils.translation import ugettext_lazy as _
-from django import VERSION
+from django.utils.encoding import force_text
 
 from rest_framework import serializers, exceptions
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError
+
+# Get the UserModel
+UserModel = get_user_model()
 
 
 class LoginSerializer(serializers.Serializer):
@@ -95,7 +94,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     User model w/o password
     """
     class Meta:
-        model = get_user_model()
+        model = UserModel
         fields = ('username', 'email', 'first_name', 'last_name')
         read_only_fields = ('email', )
 
@@ -114,7 +113,11 @@ class PasswordResetSerializer(serializers.Serializer):
         # Create PasswordResetForm with the serializer
         self.reset_form = self.password_reset_form_class(data=self.initial_data)
         if not self.reset_form.is_valid():
-            raise serializers.ValidationError('Error')
+            raise serializers.ValidationError(_('Error'))
+
+        if not UserModel.objects.filter(email=value).exists():
+            raise serializers.ValidationError(_('Invalid e-mail address'))
+
         return value
 
     def save(self):
@@ -146,11 +149,10 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         self._errors = {}
-        # Get the UserModel
-        UserModel = get_user_model()
+
         # Decode the uidb64 to uid to get User object
         try:
-            uid = uid_decoder(attrs['uid'])
+            uid = force_text(uid_decoder(attrs['uid']))
             self.user = UserModel._default_manager.get(pk=uid)
         except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
             raise ValidationError({'uid': ['Invalid value']})
@@ -216,6 +218,6 @@ class PasswordChangeSerializer(serializers.Serializer):
 
     def save(self):
         self.set_password_form.save()
-        if VERSION[1] > 6 and not self.logout_on_password_change:
+        if not self.logout_on_password_change:
             from django.contrib.auth import update_session_auth_hash
             update_session_auth_hash(self.request, self.user)
