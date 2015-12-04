@@ -1,5 +1,8 @@
 from rest_framework import serializers
+from django.utils.timezone import activate
+from django.conf import settings
 from main.models import *
+activate(settings.TIME_ZONE)
 
 class ComunidadSerializer(serializers.ModelSerializer):
 	usuarios = serializers.SlugRelatedField(many=True, read_only=True, slug_field='nombre')

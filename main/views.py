@@ -25,16 +25,14 @@ from rest_framework.response import Response
 from rest_framework import generics
 from django.core.mail import send_mail
 import sys
+import datetime
+from django.utils import timezone
 
 class ComunidadViewSet(viewsets.ModelViewSet):
-	print >> sys.stderr, "string or object goes here"
 
 	authentication_classes = ()
 	permission_classes = (AllowAny,)
 
-	#def get_queryset(self):
-		#print self.request.META
-	#	print >> sys.stderr, self.request.META
 	queryset = Comunidad.objects.all()
 
 	serializer_class = ComunidadSerializer
@@ -67,8 +65,9 @@ class PublicacionCaravanaView(generics.ListAPIView):
 	#queryset = Caravana.objects.all()
 	def get_queryset(self):
 		usuario = Usuario.objects.get(user = self.request.user)
+		today = datetime.datetime.now()
 		comunidad = usuario.comunidad
-		return PublicacionCaravana.objects.filter(lider__comunidad=comunidad).exclude(lider=usuario).order_by('fecha_salida')
+		return PublicacionCaravana.objects.filter(fecha_salida__gte = today).filter(lider__comunidad=comunidad).exclude(lider=usuario).order_by('fecha_salida')
 
 class RutasView(generics.ListAPIView):
 	authentication_classes = (TokenAuthentication,)
@@ -89,8 +88,9 @@ class CaravanasLiderUsuario(generics.ListAPIView):
 
 	def get_queryset(self):
 		usuario = Usuario.objects.get(user = self.request.user)
-		print usuario
-		return PublicacionCaravana.objects.filter(lider=usuario)
+		today = datetime.datetime.now()
+		#today = datetime.datetime.today()
+		return PublicacionCaravana.objects.filter(fecha_salida__gte = today).filter(lider=usuario).order_by('fecha_salida')
 
 class CaravanasDeUsuario(generics.ListAPIView):
 	authentication_classes = (TokenAuthentication,)
@@ -110,7 +110,9 @@ class PublicacionesCaravanasDeUsuario(generics.ListAPIView):
 
 	def get_queryset(self):
 		usuario = Usuario.objects.get(user = self.request.user)
-		return PublicacionCaravana.objects.filter(suscripciones__usuario=usuario).distinct()
+		today = datetime.datetime.now()
+		print today
+		return PublicacionCaravana.objects.filter(fecha_salida__gte = today).filter(suscripciones__usuario=usuario).distinct().order_by('fecha_salida')
 
 class UsuarioACaravanaView(APIView):
 	authentication_classes = (TokenAuthentication,)
@@ -192,7 +194,6 @@ class AnularSuscripcionAPublicacionCaravanaView(APIView):
 
 @csrf_exempt
 def postLocation2(request):
-	print request.POST
 	return HttpResponse("<p>holaaass</p>")
 
 class EmpezarPublicacionCaravana(APIView):
@@ -201,7 +202,6 @@ class EmpezarPublicacionCaravana(APIView):
 
 	def post(self,request):
 		publicacionCaravana = PublicacionCaravana.objects.get(id=request.data["id_caravana"])
-		print publicacionCaravana.id
 		publicacionCaravana.empezo = True
 		publicacionCaravana.save()
 		content = {
@@ -277,6 +277,7 @@ class PublicarCaravana(APIView):
 		destino = request.data["destino"]
 		ruta = request.data["ruta"]
 		fecha_salida = request.data["fecha_salida"]
+		print fecha_salida
 		publicacionCaravana = PublicacionCaravana(lider = usuario,
 			origen = origen,
 			destino = destino,
@@ -294,7 +295,6 @@ class RegistrarUsuario(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def post(self,request):
-		print request.data
 		user_sistema = request.user
 		email = request.data["email"]
 		comunidad = Comunidad.objects.get(url_email = email.split("@")[1])
